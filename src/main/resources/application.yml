@@ -3,18 +3,33 @@ server:
 
 spring:
     application:
-        name: recon-backend
+        name: reconx
+
     datasource:
-        url: jdbc:h2:mem:recondb
-        driverClassName: org.h2.Driver
-        username: sa
-        password:
+        url: jdbc:postgresql://localhost:5432/reconx
+        username: postgres
+        password: postgres
 
     jpa:
         hibernate:
-            ddl-auto: update
+            ddl-auto: create-drop
         show-sql: true
 
-    h2:
-        console:
-            enabled: true
+    flyway:
+        enabled: false
+
+    servlet:
+        multipart:
+            max-file-size: 500MB
+            max-request-size: 500MB
+
+    data:
+        redis:
+            host: localhost
+            port: 6379
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"
