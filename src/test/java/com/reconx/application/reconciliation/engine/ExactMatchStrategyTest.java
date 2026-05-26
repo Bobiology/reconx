@@ -1,6 +1,7 @@
 package com.reconx.application.reconciliation.engine;
 
 import com.reconx.domain.reconciliation.ReconciliationRecord;
+import com.reconx.reconciliation.engine.ExactMatchStrategy;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

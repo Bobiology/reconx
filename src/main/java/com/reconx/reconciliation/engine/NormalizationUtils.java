@@ -1,4 +1,4 @@
-package com.reconx.application.reconciliation.engine;
+package com.reconx.reconciliation.engine;
 
 public class NormalizationUtils {
 

@@ -1,4 +1,4 @@
-package com.reconx.application.reconciliation.engine;
+package com.reconx.reconciliation.engine;
 
 import com.reconx.domain.reconciliation.ReconciliationRecord;
 

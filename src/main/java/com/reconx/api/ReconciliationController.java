@@ -1,7 +1,7 @@
 package com.reconx.api;
 
 import com.reconx.infrastructure.persistence.entity.ReconciliationJobEntity;
-import com.reconx.application.reconciliation.ReconciliationService;
+import com.reconx.reconciliation.ReconciliationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

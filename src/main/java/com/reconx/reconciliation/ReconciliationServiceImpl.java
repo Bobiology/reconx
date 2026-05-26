@@ -1,8 +1,7 @@
-package com.reconx.application.reconciliation;
+package com.reconx.reconciliation;
 
 import com.reconx.infrastructure.persistence.entity.ReconciliationJobEntity;
 import com.reconx.infrastructure.persistence.repository.ReconciliationJobRepository;
-import com.reconx.application.reconciliation.ReconciliationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
