@@ -20,27 +20,16 @@ public class JwtTokenProvider {
             String secret
     ) {
 
-        this.key =
-                Keys.hmacShaKeyFor(
-                        secret.getBytes()
-                );
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateAccessToken(
-            UserDetails user
-    ) {
-
-        List<String> roles =
-                user.getAuthorities()
-                        .stream()
-                        .map(a -> a.getAuthority())
-                        .collect(Collectors.toList());
+    public String generateAccessToken(String userName, String role) {
 
         return Jwts.builder()
 
-                .subject(user.getUsername())
+                .subject(userName)
 
-                .claim("roles", roles)
+                .claim("role", role)
 
                 .issuedAt(new Date())
 
@@ -51,7 +40,7 @@ public class JwtTokenProvider {
                         )
                 )
 
-                .signWith(key)
+                .signWith(key, SignatureAlgorithm.HS256)
 
                 .compact();
     }
@@ -73,24 +62,22 @@ public class JwtTokenProvider {
                         )
                 )
 
-                .signWith(key)
+                .signWith(key, SignatureAlgorithm.HS256)
 
                 .compact();
     }
 
-    public Claims parseClaims(
-            String token
-    ) {
+    public Claims parseClaims(String token) {
 
-        return Jwts.parser()
-
-                .verifyWith(key)
-
-                .build()
-
-                .parseSignedClaims(token)
-
-                .getPayload();
+        try {
+            return Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        }catch (Exception e) {
+            throw new InvalidJwtException("Invalid JWT token Or Expired Token: "+e.getMessage());
+        }
     }
 
     public boolean isTokenValid(
