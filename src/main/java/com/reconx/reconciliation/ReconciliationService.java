@@ -1,4 +1,4 @@
-package com.reconx.application.reconciliation;
+package com.reconx.reconciliation;
 
 import com.reconx.infrastructure.persistence.entity.ReconciliationJobEntity;
 

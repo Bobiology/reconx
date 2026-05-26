@@ -13,6 +13,7 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -48,8 +49,8 @@ public class JwtAuthenticationFilter
                     provider.getUsername(token);
 
             List<SimpleGrantedAuthority>
-                    authorities =
-                    provider.getRoles(token)
+                    authorities = Optional.ofNullable(
+                    provider.getRoles(token)).orElse(List.of())
                             .stream()
                             .map(SimpleGrantedAuthority::new)
                             .toList();
