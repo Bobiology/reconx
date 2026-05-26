@@ -1,8 +1,7 @@
 package com.reconx.application.file;
 
 import com.reconx.infrastructure.persistence.entity.UploadedFileEntity;
-import com.reconx.infrastructure.persistence.repository.UploadedFileRepository;
-import com.reconx.application.file.FileUploadService;
+import com.reconx.infrastructure.persistence.repository.UploadedFileOldRepository;
 import com.reconx.infrastructure.storage.LocalStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,7 @@ import java.util.UUID;
 public class FileUploadServiceImpl implements FileUploadService {
 
     private final LocalStorageService storage;
-    private final UploadedFileRepository repo;
+    private final UploadedFileOldRepository repo;
 
     @Override
     public UploadedFileEntity store(MultipartFile file) {

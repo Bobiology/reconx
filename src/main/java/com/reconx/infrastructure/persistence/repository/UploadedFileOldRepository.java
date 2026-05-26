@@ -5,4 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface UploadedFileRepository extends JpaRepository<UploadedFileEntity, UUID> {}
+public interface UploadedFileOldRepository extends JpaRepository<UploadedFileEntity, UUID> {}
