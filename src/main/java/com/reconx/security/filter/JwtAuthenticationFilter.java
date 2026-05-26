@@ -1,6 +1,7 @@
 package com.reconx.security.filter;
 
 import com.reconx.security.jwt.*;
+import com.reconx.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,65 +13,44 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter
-        extends OncePerRequestFilter {
+        extends GenericFilter {
 
     private final JwtTokenProvider provider;
+    private final UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
+    public void doFilter(ServletRequest request,
+                         ServletResponse response,
+                         FilterChain chain) throws IOException, ServletException {
 
-        String auth =
-                request.getHeader("Authorization");
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String header = httpRequest.getHeader("Authorization");
 
-        if (auth != null &&
-                auth.startsWith("Bearer ")) {
-
-            String token =
-                    auth.substring(7);
-
-            if (!provider.isTokenValid(token)) {
-
-                throw new InvalidJwtException(
-                        "JWT token expired or invalid"
-                );
-            }
-
-            String username =
-                    provider.getUsername(token);
-
-            List<SimpleGrantedAuthority>
-                    authorities = Optional.ofNullable(
-                    provider.getRoles(token)).orElse(List.of())
-                            .stream()
-                            .map(SimpleGrantedAuthority::new)
-                            .toList();
-
-            UsernamePasswordAuthenticationToken
-                    authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            username,
-                            null,
-                            authorities
-                    );
-
-            SecurityContextHolder
-                    .getContext()
-                    .setAuthentication(authentication);
+        if (header == null || !header.startsWith("Bearer ")) {
+            chain.doFilter(request, response);
+            return;
         }
 
-        filterChain.doFilter(
-                request,
-                response
-        );
+        String token = header.substring(7);
+
+            String username = provider.getUsername(token);
+
+            userRepository.findByUsername(username).ifPresent(user -> {
+                var authentication = new UsernamePasswordAuthenticationToken(
+                        username,
+                        null,
+                        Collections.emptyList()
+                );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            });
+
+        chain.doFilter(request, response);
     }
 }
