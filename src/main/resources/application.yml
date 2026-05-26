@@ -39,3 +39,6 @@ camel:
 file:
     uploads:
         path: /Users/mac/Documents/iLIFE/PERSONAL/SH/ReconX/uploads/
+
+jwt:
+    secret: super-secret-key-super-secret-key
