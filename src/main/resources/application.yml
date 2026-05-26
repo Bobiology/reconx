@@ -41,4 +41,4 @@ file:
         path: /Users/mac/Documents/iLIFE/PERSONAL/SH/ReconX/uploads/
 
 jwt:
-    secret: super-secret-key-super-secret-key
+    secret: very-secure-secret-key-very-secure-secret-key

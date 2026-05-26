@@ -2,42 +2,129 @@ package com.reconx.security.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
-import java.util.Date;
+import javax.crypto.SecretKey;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
 
-    private final Key key =
-            Keys.hmacShaKeyFor(
-                    "super-secret-key-super-secret-key"
-                            .getBytes()
-            );
+    private final SecretKey key;
 
-    public String generateToken(String username) {
+    public JwtTokenProvider(
+            @Value("${jwt.secret}")
+            String secret
+    ) {
+
+        this.key =
+                Keys.hmacShaKeyFor(
+                        secret.getBytes()
+                );
+    }
+
+    public String generateAccessToken(
+            UserDetails user
+    ) {
+
+        List<String> roles =
+                user.getAuthorities()
+                        .stream()
+                        .map(a -> a.getAuthority())
+                        .collect(Collectors.toList());
 
         return Jwts.builder()
-                .subject(username)
+
+                .subject(user.getUsername())
+
+                .claim("roles", roles)
+
                 .issuedAt(new Date())
+
                 .expiration(
                         new Date(
                                 System.currentTimeMillis()
-                                        + 86400000
+                                        + 1000 * 60 * 30
                         )
                 )
+
                 .signWith(key)
+
                 .compact();
     }
 
-    public String getUsername(String token) {
+    public String generateRefreshToken(
+            UserDetails user
+    ) {
+
+        return Jwts.builder()
+
+                .subject(user.getUsername())
+
+                .issuedAt(new Date())
+
+                .expiration(
+                        new Date(
+                                System.currentTimeMillis()
+                                        + 1000L * 60 * 60 * 24 * 7
+                        )
+                )
+
+                .signWith(key)
+
+                .compact();
+    }
+
+    public Claims parseClaims(
+            String token
+    ) {
 
         return Jwts.parser()
-                .verifyWith((javax.crypto.SecretKey) key)
+
+                .verifyWith(key)
+
                 .build()
+
                 .parseSignedClaims(token)
-                .getPayload()
+
+                .getPayload();
+    }
+
+    public boolean isTokenValid(
+            String token
+    ) {
+
+        try {
+
+            Claims claims =
+                    parseClaims(token);
+
+            return claims
+                    .getExpiration()
+                    .after(new Date());
+
+        } catch (JwtException e) {
+
+            return false;
+        }
+    }
+
+    public String getUsername(
+            String token
+    ) {
+
+        return parseClaims(token)
                 .getSubject();
+    }
+
+    public List<String> getRoles(
+            String token
+    ) {
+
+        return parseClaims(token)
+                .get("roles", List.class);
     }
 }
