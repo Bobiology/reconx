@@ -1,5 +1,6 @@
 package com.reconx.infrastructure.storage;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,10 +10,12 @@ import java.util.UUID;
 
 @Component
 public class LocalStorageService {
-
+    @Value("${file.uploads.path}")
+    String uploadPath;
     public String store(MultipartFile file) {
+
         try {
-            String baseDir = "/Users/mac/Documents/iLIFE/PERSONAL/SH/ReconX/uploads/";
+            String baseDir = uploadPath;
             Files.createDirectories(Paths.get(baseDir));
 
             String id = UUID.randomUUID().toString();

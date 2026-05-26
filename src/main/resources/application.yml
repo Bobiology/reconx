@@ -33,3 +33,9 @@ management:
         web:
             exposure:
                 include: "*"
+camel:
+    springboot:
+        main-run-controller: true
+file:
+    uploads:
+        path: /Users/mac/Documents/iLIFE/PERSONAL/SH/ReconX/uploads/
